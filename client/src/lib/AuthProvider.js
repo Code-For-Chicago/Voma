@@ -13,6 +13,7 @@ function AuthProvider({ children }) {
   // Actual authentiation is stored in the cookie. Actions are validated serverside. 
   const [auth, setAuth] = useState(defaultAuth);
   const [loginFormError, setLoginFormError] = useState(false);
+  const [updateMade, setUpdateMade] = useState({ updates: 0 }); // Triggers re-rendering of /board on updates.
 
   function updateLoginState() {
     fetch('/api/authenticated')
@@ -35,6 +36,11 @@ function AuthProvider({ children }) {
   function setAuthentication(authState) {
     localStorage.setItem('auth', JSON.stringify(authState));
     setAuth(authState);
+  }
+
+  function refreshBoard() {
+    const totalUpdates = updateMade + 1;
+    setUpdateMade({ updates: totalUpdates });
   }
 
   const login = (email, password) => {
@@ -98,12 +104,13 @@ function AuthProvider({ children }) {
   const funcs = {
     updateLoginState,
     isAuthenticated,
+    refreshBoard,
     login,
     logout,
   };
 
   return (
-    <AuthContext.Provider value={{ ...funcs, auth, loginFormError }}>
+    <AuthContext.Provider value={{ ...funcs, auth, updateMade, loginFormError }}>
       {children}
     </AuthContext.Provider>
   );

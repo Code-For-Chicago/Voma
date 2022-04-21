@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { deepPurple } from '@mui/material/colors';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import App from './components/App';
 import GlobalStyles from './lib/GlobalStyles';
 import reportWebVitals from './reportWebVitals';
@@ -21,16 +23,18 @@ const theme = createTheme({
 
 ReactDOM.render(
   <React.StrictMode>
-    <GlobalStyles />
-    <ThemeProvider theme={theme}>
-      <AuthProvider>
-        <Router>
-          <Header />
-          <App />
-          <Footer />
-        </Router>
-      </AuthProvider>
-    </ThemeProvider>
+    <DndProvider backend={HTML5Backend}>
+      <GlobalStyles />
+      <ThemeProvider theme={theme}>
+        <AuthProvider>
+          <Router>
+            <Header />
+            <App />
+            <Footer />
+          </Router>
+        </AuthProvider>
+      </ThemeProvider>
+    </DndProvider>
   </React.StrictMode>,
   document.getElementById('root'),
 );

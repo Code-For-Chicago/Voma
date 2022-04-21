@@ -1,10 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { Grid, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { deepPurple } from '@mui/material/colors';
+import { useDrop } from 'react-dnd';
 import { fetchVolunteers, fetchProjects } from '../lib/Requests';
 import VolunteerBox from '../components/AssignmentBoard/VolunteerBox';
 import ProjectBox from '../components/AssignmentBoard/ProjectBox';
+
+import { AuthContext } from '../lib/AuthProvider';
 
 const useStyles = makeStyles({
     sidebar: {
@@ -13,6 +16,7 @@ const useStyles = makeStyles({
         paddingRight: '24px',
         minHeight: 'calc(100vh - 64px)',
         maxHeight: 'calc(100vh - 64px)',
+        maxWidth: '272px',
         marginTop: '-32px',
         backgroundColor: 'rgba(98, 0, 238, 0.08)',
         '& .MuiBox-root': {
@@ -72,6 +76,23 @@ export default function AssignmentBoard() {
     const [volunteers, setVolunteers] = useState([]);
     const [projects, setProjects] = useState([]);
 
+    const AuthUser = useContext(AuthContext);
+
+    // Handle Sidebar as a drop area, unsets a project for a volunteer.
+    const [{ canDrop, isOver }, drop] = useDrop(() => ({
+        accept: 'volunteer',
+        drop: () => ({ 
+            name: `project-0`,
+            project: {
+                id: 0, // project.id=0 will unset the project.
+            }
+        }),
+        collect: (monitor) => ({
+            isOver: monitor.isOver(),
+            canDrop: monitor.canDrop(),
+        })
+    }));
+
     const classes = useStyles();
 
     // Filter out just the volunteers currently assigned to this project.
@@ -85,7 +106,7 @@ export default function AssignmentBoard() {
         return projectVolunteers;
     };
 
-    useEffect(() => { // Run once on component mount and initialize volunteer/project data.
+    useEffect(() => { // Run once on component mount and when an update is made.
         async function initializeBoard() {
             let volunteerList = await fetchVolunteers();
             let projectList = await fetchProjects();
@@ -94,32 +115,36 @@ export default function AssignmentBoard() {
             setProjects(projectList);
         }
         initializeBoard();
-    }, []); // \Run once on component mount and initialize volunteer/project data.
+    }, [AuthUser.updateMade]); // \Run once on component mount and when an update is made.
 
 
     return (<>
         <Grid container justifyContent="flex-box">
-            <Grid item md={2} className={classes.sidebar}>
-                <Typography variant="h6" mt="24px" mb="16px">Currently Onboarding</Typography>
-                {Object.entries(volunteers).map(([key, volunteer]) => (
+            <Grid 
+                item 
+                md={2} 
+                ref={drop}
+                className={classes.sidebar}>
+                <Typography variant="h6" mt="24px" mb="16px">Unassigned Volunteers</Typography>
+                {volunteers && 
+                Object.entries(volunteers).map(([key, volunteer]) => (
                     !volunteer.projectId && // Display volunteers with no assigned project.
                     <VolunteerBox 
                         key={`volunteer-${volunteer.id}`} 
                         volunteer={volunteer}/>
                 ))}
             </Grid>
-            
+                
             <Grid item md={10} className={classes.board} sx={{ whiteSpace: 'nowrap' }}>
-
-                {Object.entries(projects).map(([key, project]) => ( // Display projects.
+                {projects && 
+                Object.entries(projects).map(([key, project]) => ( // Display projects.
                     <ProjectBox 
                         key={`project-${project.id}`} 
                         volunteers={getProjectVolunteers(project.id)}
                         project={project}
                         classes={classes}/>
                 ))}
-
             </Grid>
         </Grid>
-    </>)
+    </>);
 }
