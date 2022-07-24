@@ -5,8 +5,8 @@ import { deepPurple } from '@mui/material/colors';
 const useStyles = makeStyles({
     sidebar: {
         overflowY: 'scroll',
-        paddingLeft: '16px',
-        paddingRight: '24px',
+        // paddingLeft: '16px',
+        // paddingRight: '24px',
         minHeight: 'calc(100vh - 64px)',
         maxHeight: 'calc(100vh - 64px)',
         marginTop: '-32px',
@@ -19,9 +19,12 @@ const useStyles = makeStyles({
         }
     },
     board: {
-        overflowX: 'scroll',
+        overflow: 'scroll',
         paddingRight: '24px',
         marginTop: '-32px',
+        minHeight: '100vh',
+        maxHeight: '100vh',
+        height: 'auto',
         width: 'calc(100vw - 272px)',
         maxWidth: 'calc(100vw - 272px)',
         '& > .MuiBox-root': {
@@ -68,7 +71,7 @@ export default function BoardContainer({ sideBarContent, mainContainerContent })
     const classes = useStyles();
 
     return (<>
-        <Grid container justifyContent="flex-box">
+        <Grid container justifyContent="flex-box" sx={{ maxHeight: '100vh', position: 'fixed'}}>
             <Grid item md={2} className={classes.sidebar}>
                 { sideBarContent }
             </Grid>  

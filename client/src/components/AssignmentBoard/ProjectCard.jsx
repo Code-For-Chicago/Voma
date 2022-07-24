@@ -1,18 +1,29 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
-import { useStyles } from '../../styles/components/Boxes';
+import { Typography } from '@mui/material';
+import { ProjectSidebarProject } from '../../styles/pages/ProjectPage.style';
 
-export default function ProjectBox({ project, onClick }) {
-    const classes = useStyles();
+export default function ProjectBox({ projectId, projectName, onClick, selected }) {
+    const getDetails = () => {
+        onClick(projectId);
+    }
+
+    const getDetailsKeyPress = (e) => {
+        const { key } = e;
+        if (key === 'Enter') {
+            onClick(projectId);
+        }
+    }
     return (
-        <Box xw
-            mt="8px" 
-            mb="16px"
-            onClick={onClick}
-            className={classes.volunteerName}
+        <ProjectSidebarProject 
+            $selected={selected} 
+            onClick={getDetails} 
+            tabIndex={0} 
+            onKeyDown={getDetailsKeyPress}
         >
-
-            <Typography variant="h6" mb="16px">{project.name}</Typography>
-        </Box>
-    );
+            <Typography gutterBottom>
+                {projectName}
+            </Typography>
+        </ProjectSidebarProject>
+    )
 }
+

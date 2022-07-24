@@ -6,12 +6,13 @@ import { fetchVolunteers, fetchProjects } from '../lib/Requests';
 import VolunteerBox from '../components/AssignmentBoard/VolunteerBox';
 import ProjectContainer from '../components/AssignmentBoard/ProjectContainer';
 import BoardContainer from '../components/AssignmentBoard/BoardContainer';
+import { VolunteerPageSidebar } from '../styles/pages/AssignmentBoard.style';
 
 const useStyles = makeStyles({
     sidebar: {
         overflowY: 'scroll',
-        paddingLeft: '16px',
-        paddingRight: '24px',
+        // paddingLeft: '16px',
+        // paddingRight: '24px',
         minHeight: 'calc(100vh - 64px)',
         maxHeight: 'calc(100vh - 64px)',
         marginTop: '-32px',
@@ -108,7 +109,7 @@ export default function AssignmentBoard() {
             });
 
             const sidebar = (
-                <>
+                <VolunteerPageSidebar>
                     <Typography variant="h6" mt="24px" mb="16px">Assign to Project</Typography>
                     { copy.assign.length > 0 ? 
                         copy.assign.map((vol) => <VolunteerBox 
@@ -129,7 +130,7 @@ export default function AssignmentBoard() {
                         :
                         <Typography variant="body">No Volunteers Currently Onboarding</Typography> 
                     }
-                </>
+                </VolunteerPageSidebar>
             )
             setVolunteerCards(sidebar);
             setFilteredVolunteers(copy);
